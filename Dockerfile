@@ -1,9 +1,7 @@
-ARG NODE_VERSION=12.18.3
-FROM node:${NODE_VERSION}-alpine
+FROM node:12-alpine
 RUN apk add --no-cache make pkgconfig gcc g++ python libx11-dev libxkbfile-dev
-ARG version=latest
 WORKDIR /home/theia
-ADD $version.package.json ./package.json
+ADD package.json package.json
 ARG GITHUB_TOKEN
 RUN yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
@@ -16,8 +14,7 @@ RUN yarn --pure-lockfile && \
     yarn autoclean --force && \
     yarn cache clean
 
-FROM node:${NODE_VERSION}-alpine
-# See : https://github.com/theia-ide/theia-apps/issues/34
+FROM node:12-alpine
 RUN addgroup theia && \
     adduser -G theia -s /bin/sh -D theia;
 RUN chmod g+rw /home && \
